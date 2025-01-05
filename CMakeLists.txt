@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.29)
 project(GambitTrainer VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 23)

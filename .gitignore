@@ -1,2 +1,7 @@
-/[Bb]uild
-/out
+[Bb]uild/
+out/
+.vs/
+CMakeUserPresets.json
+vcpkg-manifest-install.log
+trainer
+.cache
