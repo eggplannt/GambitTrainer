@@ -1,6 +1,5 @@
 {
-  "dependencies": [
-    "sdl3",
-    "imgui"
-  ]
+  "name": "gambittrainer",
+
+  "dependencies": ["sdl3", "imgui"]
 }
