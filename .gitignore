@@ -7,6 +7,8 @@ vcpkg-manifest-install.log
 trainer
 vcpkg_installed
 .cache
+*.exe
+*.dll
 
 
 ## Ignore Visual Studio temporary files, build results, and
