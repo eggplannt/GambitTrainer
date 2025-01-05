@@ -13,6 +13,7 @@ find_package(imgui CONFIG REQUIRED)
 
 add_executable(trainer src/main.cpp)
 target_link_libraries(trainer PRIVATE imgui::imgui SDL3::SDL3 )
+include_directories(${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 set_target_properties(trainer PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_compile_definitions(trainer PUBLIC
       $<$<CONFIG:Debug>:_DEBUG>
