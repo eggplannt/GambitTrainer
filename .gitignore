@@ -1,7 +1,9 @@
-[Bb]uild/
-out/
-.vs/
+[Bb]uild
+[Oo]ut
+.vs
+.vscode
 CMakeUserPresets.json
 vcpkg-manifest-install.log
 trainer
+vcpkg_installed
 .cache

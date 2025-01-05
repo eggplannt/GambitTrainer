@@ -1,7 +1,8 @@
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-#include <SDL3/SDL_surface.h>
-#include <SDL3/SDL_video.h>
+#include "SDL3/SDL.h"
+#include "imgui.h"
+#include "SDL3/SDL_main.h"
+#include "SDL3/SDL_surface.h"
+#include "SDL3/SDL_video.h"
 #include <cstdlib>
 #include <string>
 
@@ -80,7 +81,7 @@ int main( int argc, char* args[] ) {
       if( e.type == SDL_EVENT_QUIT ) quit = true;
       SDL_FillSurfaceRect( gScreenSurface, nullptr, SDL_MapSurfaceRGB( gScreenSurface, 0, 0xFF, 0 ) );
 
-      // SDL_BlitSurface( gHelloWorld, nullptr, gScreenSurface, nullptr );
+      SDL_BlitSurface( gHelloWorld, nullptr, gScreenSurface, nullptr );
 
       SDL_UpdateWindowSurface( gWindow );
     }
