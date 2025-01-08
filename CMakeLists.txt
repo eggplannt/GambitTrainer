@@ -1,4 +1,5 @@
-set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+string(REPLACE "\\" "/" VCPKG_PATH $ENV{VCPKG_ROOT})
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
 set(VCPKG_INSTALLED_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed)
 cmake_minimum_required(VERSION 3.29)
 project(GambitTrainer VERSION 1.0)
