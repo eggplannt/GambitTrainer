@@ -1,25 +1,52 @@
-#include "SDL3/SDL.h"
-#include "imgui.h"
-#include "SDL3/SDL_main.h"
-#include "SDL3/SDL_surface.h"
-#include "SDL3/SDL_video.h"
+#include <SDL3/SDL_oldnames.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
+#include <imgui.h>
+#include <SDL3/SDL.h>
 #include <cstdlib>
 #include <string>
 
 SDL_Window* gWindow = nullptr;
-    
-SDL_Surface* gScreenSurface = nullptr;
+
+SDL_Renderer* gRenderer = nullptr;
 
 SDL_Surface* gHelloWorld = nullptr;
+const int BOARDSIZE = 480;
 
+void drawBackground(){
+  bool isWhite = true;
+  int white[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+  int black[4] = {0, 0, 0, 0xFF};
+  int* color = white;
+  float squareSize = BOARDSIZE/float(8);
 
+  for (int y = 0; y < 8; y++){
+    isWhite = !isWhite;
+    if (isWhite) color = white;
+    else color = black;
+    for (int x = 0; x < 8 ; x++){
+      SDL_SetRenderDrawColor(gRenderer, color[0], color[1], color[2], color[4]);
+      SDL_FRect rect{
+        x*squareSize, 
+        y*squareSize,
+        squareSize,
+        squareSize
+      };
+      SDL_RenderFillRect(gRenderer, &rect);
+
+      isWhite = !isWhite;
+      if (isWhite) color = white;
+      else color = black;
+
+    }
+  }
+}
 void close() {
   SDL_DestroySurface( gHelloWorld );
   gHelloWorld = nullptr;
   
   SDL_DestroyWindow( gWindow );
   gWindow = nullptr;
-  gScreenSurface = nullptr;
 
   SDL_Quit();
 }
@@ -33,7 +60,7 @@ void init() {
 
   gWindow = SDL_CreateWindow(
     "GambitTrainer",
-    640,
+    480,
     480,
     0
   );
@@ -42,7 +69,12 @@ void init() {
     close();
     exit(-1);
   }
-  gScreenSurface = SDL_GetWindowSurface(gWindow);
+  gRenderer = SDL_CreateRenderer(gWindow, NULL);
+  if (gRenderer == nullptr){
+    SDL_Log("SDL_CreateRenderer: %s", SDL_GetError());
+    close();
+    exit(-1);
+  }
 }
 
 bool loadMedia()
@@ -79,11 +111,14 @@ int main( int argc, char* args[] ) {
   while( quit == false ) {
     while( SDL_PollEvent( &e ) ) {
       if( e.type == SDL_EVENT_QUIT ) quit = true;
-      SDL_FillSurfaceRect( gScreenSurface, nullptr, SDL_MapSurfaceRGB( gScreenSurface, 0, 0xFF, 0 ) );
+      SDL_RenderClear(gRenderer);
+      drawBackground();
 
-      SDL_BlitSurface( gHelloWorld, nullptr, gScreenSurface, nullptr );
+      // SDL_FillSurfaceRect( gScreenSurface, nullptr, SDL_MapSurfaceRGB( gScreenSurface, 0, 0xFF, 0 ) );
 
-      SDL_UpdateWindowSurface( gWindow );
+      // SDL_BlitSurface( gHelloWorld, nullptr, gScreenSurface, nullptr );
+      SDL_RenderPresent(gRenderer);
+
     }
     
   }
