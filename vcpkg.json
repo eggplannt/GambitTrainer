@@ -1,5 +1,8 @@
 {
   "name": "gambittrainer",
-
-  "dependencies": ["sdl3", "imgui"]
+  "dependencies": [
+    "imgui",
+    "sdl3",
+    "fmt"
+  ]
 }
