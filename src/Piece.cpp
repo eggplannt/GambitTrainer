@@ -12,7 +12,7 @@ std::filesystem::path Piece::getImagePath() {
 }
 std::string Piece::printPiece(){
     if (color == PieceColor::None){
-        return "";
+        return "-";
     }
     return fmt::format("{}-{}", (color == PieceColor::White) ? "white" : "black", name);
 }

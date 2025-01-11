@@ -4,10 +4,10 @@
 #include <map>
 
 
-void printGrid(Piece board[8][8]) {
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            fmt::print("{} ", board[j][i].printPiece());
+void Board::printGrid() {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            fmt::print("{} ", pieces[j][i].printPiece());
         }
         fmt::print("\n");
     }
@@ -33,6 +33,8 @@ Board::Board(std::string fen) : pieces{} {
     for (char s : fen){
         if (fenMap.count(s)){
             pieces[x][y] = fenMap[s];
+            // fmt::print("{} ({}, {})", pieces[x][y].printPiece(), x, y);
+
             x++;
         }
         else if (s == '/'){
@@ -46,5 +48,4 @@ Board::Board(std::string fen) : pieces{} {
             x += s-'0';
         }
     }
-    printGrid(pieces);
 }

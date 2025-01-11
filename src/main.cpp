@@ -7,7 +7,7 @@ SDL_Renderer* gRenderer = nullptr;
 SDL_Surface* gHelloWorld = nullptr;
 
 const int BOARDSIZE = 480;
-const std::string DEFAULTFEN = "rnbqkbnr/pppppp1p/8/6p1/7P/5N2/PPPPPPP1/RNBQKB1R b KQkq - 1 2";
+const std::string DEFAULTFEN = "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3";
 
 int main( int argc, char* args[] ) {
   int exitCode = 0;
@@ -21,6 +21,7 @@ int main( int argc, char* args[] ) {
   }
 
   Board board(DEFAULTFEN);
+  board.printGrid();
   bool quit = false;
   SDL_Event e;
   SDL_zero(e);
@@ -39,7 +40,7 @@ int main( int argc, char* args[] ) {
 }
 
 void basicRenderBoard(){
-  bool isWhite = true;
+  bool isWhite = false;
   int white[4] = {0xFF, 0xFF, 0xFF, 0xFF};
   int black[4] = {0, 0, 0, 0xFF};
   int* color = white;

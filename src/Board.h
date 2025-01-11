@@ -6,6 +6,7 @@
 class Board{
 public:
     Board(std::string fen);
+    void printGrid();
 private:
     Piece pieces[8][8];
 };
