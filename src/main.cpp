@@ -7,7 +7,7 @@ SDL_Renderer* gRenderer = nullptr;
 SDL_Surface* gHelloWorld = nullptr;
 
 const int BOARDSIZE = 480;
-const std::string DEFAULTFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const std::string DEFAULTFEN = "rnbqkbnr/pppppp1p/8/6p1/7P/5N2/PPPPPPP1/RNBQKB1R b KQkq - 1 2";
 
 int main( int argc, char* args[] ) {
   int exitCode = 0;
@@ -50,7 +50,7 @@ void basicRenderBoard(){
     if (isWhite) color = white;
     else color = black;
     for (int x = 0; x < 8 ; x++){
-      SDL_SetRenderDrawColor(gRenderer, color[0], color[1], color[2], color[4]);
+      SDL_SetRenderDrawColor(gRenderer, color[0], color[1], color[2], color[3]);
       SDL_FRect rect{
         x*squareSize, 
         y*squareSize,

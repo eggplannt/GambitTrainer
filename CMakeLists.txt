@@ -1,3 +1,4 @@
+set (CMAKE_CXX_STANDARD 23)
 string(REPLACE "\\" "/" VCPKG_PATH $ENV{VCPKG_ROOT})
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
 set(VCPKG_INSTALLED_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed)
