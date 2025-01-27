@@ -9,9 +9,10 @@ project(GambitTrainer VERSION 1.0)
 
 
 find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL3_image CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
 add_subdirectory(src)
 
-target_link_libraries(trainer PRIVATE imgui::imgui SDL3::SDL3 fmt::fmt)
+target_link_libraries(trainer PRIVATE imgui::imgui SDL3::SDL3 fmt::fmt SDL3_image::SDL3_image)

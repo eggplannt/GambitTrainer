@@ -1,7 +1,4 @@
 #include "Board.h"
-#include "Piece.h"
-#include <fmt/base.h>
-#include <map>
 
 
 void Board::printGrid() {
@@ -11,7 +8,44 @@ void Board::printGrid() {
         }
         fmt::print("\n");
     }
+
 }
+
+void Board::renderBoard(SDL_Renderer* render) {
+    SDL_Texture* boardTexture = IMG_LoadTexture(render, "res/images/board.png");
+    if (boardTexture == NULL) {
+        std::cout << "Error loading image: " << SDL_GetError();
+        return;
+    }
+    
+
+    SDL_FRect rect = { 0, 0, 480, 480};
+    SDL_RenderTexture(render, boardTexture, 0, &rect);
+    int squareSize = BOARDSIZE / 8;
+
+    for (int x = 0; x < 8; x++)
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            if (pieces[x][y].name == "") {
+                continue;
+            }
+
+            SDL_Texture* pieceTexture = IMG_LoadTexture(render, pieces[x][y].getImagePath().c_str());
+            if (pieceTexture == NULL) {
+                std::cout << "Error loading image: " << SDL_GetError();
+                return;
+            }
+
+            SDL_SetTextureBlendMode(pieceTexture, SDL_BLENDMODE_BLEND);
+
+            SDL_FRect pieceRect = { squareSize*x, squareSize*y, squareSize, squareSize };
+            SDL_RenderTexture(render, pieceTexture, 0, &pieceRect);
+            
+        }
+    }
+}
+
 Board::Board(std::string fen) : pieces{} {
     std::map<char, Piece> fenMap;
 

@@ -1,19 +1,20 @@
 #include "main.h"
 #include "Board.h"
+#include <iostream>
 #include <string>
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 SDL_Surface* gHelloWorld = nullptr;
 
-const int BOARDSIZE = 480;
-const std::string DEFAULTFEN = "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3";
+const std::string DEFAULTFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 int main( int argc, char* args[] ) {
   int exitCode = 0;
 
 
   init();
+  std::cout << SDL_VERSION;
   if( !loadMedia() ) {
     SDL_Log( "Unable to load media!\n" );
     close();
@@ -29,9 +30,10 @@ int main( int argc, char* args[] ) {
     while( SDL_PollEvent( &e ) ) {
       if( e.type == SDL_EVENT_QUIT ) quit = true;
       SDL_RenderClear(gRenderer);
-      basicRenderBoard();
-
+      //basicRenderBoard();
+      board.renderBoard(gRenderer);
       SDL_RenderPresent(gRenderer);
+
 
     }
     
@@ -39,34 +41,6 @@ int main( int argc, char* args[] ) {
   close();
 }
 
-void basicRenderBoard(){
-  bool isWhite = false;
-  int white[4] = {0xFF, 0xFF, 0xFF, 0xFF};
-  int black[4] = {0, 0, 0, 0xFF};
-  int* color = white;
-  float squareSize = BOARDSIZE/float(8);
-
-  for (int y = 0; y < 8; y++){
-    isWhite = !isWhite;
-    if (isWhite) color = white;
-    else color = black;
-    for (int x = 0; x < 8 ; x++){
-      SDL_SetRenderDrawColor(gRenderer, color[0], color[1], color[2], color[3]);
-      SDL_FRect rect{
-        x*squareSize, 
-        y*squareSize,
-        squareSize,
-        squareSize
-      };
-      SDL_RenderFillRect(gRenderer, &rect);
-
-      isWhite = !isWhite;
-      if (isWhite) color = white;
-      else color = black;
-
-    }
-  }
-}
 void close() {
   SDL_DestroySurface( gHelloWorld );
   gHelloWorld = nullptr;

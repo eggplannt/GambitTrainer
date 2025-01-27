@@ -2,13 +2,14 @@
 #include <filesystem>
 #include <fmt/core.h> 
 #include <string>
+#include <fmt/format.h>
 
 
-const std::filesystem::path Piece::piecesDir("/res/images/pieces");
+const std::string Piece::piecesDir("res/images/pieces");
 
-std::filesystem::path Piece::getImagePath() {
+std::string Piece::getImagePath() {
     std::string filename(fmt::format("{}-{}.png", (color == PieceColor::White) ? "white" : "black", name));
-    return std::filesystem::path(/*piecesDir */ filename);
+    return fmt::format("{}/{}", piecesDir, filename);
 }
 std::string Piece::printPiece(){
     if (color == PieceColor::None){

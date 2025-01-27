@@ -7,10 +7,10 @@ public:
 
     Piece(PieceColor c, std::string n) : color(c), name(n){};
     Piece() : color(PieceColor::None), name("") {}
-    std::filesystem::path getImagePath();
+    std::string getImagePath();
     std::string printPiece();
-private:
     PieceColor color;
     std::string name;
-    static const std::filesystem::path piecesDir;
+private:
+    static const std::string piecesDir;
 };
