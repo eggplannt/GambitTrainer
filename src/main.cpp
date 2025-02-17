@@ -1,72 +1,52 @@
+#include <imgui.h>
+#include <SDL3/SDL.h>
+#include <iostream>
+#include <string>
+
 #include "main.h"
 #include "Board.h"
-#include <string>
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 SDL_Surface* gHelloWorld = nullptr;
 
-const int BOARDSIZE = 480;
-const std::string DEFAULTFEN = "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3";
-
-int main( int argc, char* args[] ) {
+const std::string DEFAULTFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+int main(int argc, char *args[]) {
   int exitCode = 0;
 
 
   init();
+  std::cout << SDL_VERSION;
   if( !loadMedia() ) {
     SDL_Log( "Unable to load media!\n" );
     close();
     return -1;
   }
 
-  Board board(DEFAULTFEN);
-  board.printGrid();
-  bool quit = false;
-  SDL_Event e;
-  SDL_zero(e);
-  while( quit == false ) {
-    while( SDL_PollEvent( &e ) ) {
-      if( e.type == SDL_EVENT_QUIT ) quit = true;
-      SDL_RenderClear(gRenderer);
-      basicRenderBoard();
-
-      SDL_RenderPresent(gRenderer);
-
-    }
-    
-  }
+  gameLoop();
   close();
 }
 
-void basicRenderBoard(){
-  bool isWhite = false;
-  int white[4] = {0xFF, 0xFF, 0xFF, 0xFF};
-  int black[4] = {0, 0, 0, 0xFF};
-  int* color = white;
-  float squareSize = BOARDSIZE/float(8);
+void gameLoop() {
+  Board board(DEFAULTFEN, gRenderer);
+  board.printGrid();
 
-  for (int y = 0; y < 8; y++){
-    isWhite = !isWhite;
-    if (isWhite) color = white;
-    else color = black;
-    for (int x = 0; x < 8 ; x++){
-      SDL_SetRenderDrawColor(gRenderer, color[0], color[1], color[2], color[3]);
-      SDL_FRect rect{
-        x*squareSize, 
-        y*squareSize,
-        squareSize,
-        squareSize
-      };
-      SDL_RenderFillRect(gRenderer, &rect);
-
-      isWhite = !isWhite;
-      if (isWhite) color = white;
-      else color = black;
-
+  bool quit = false;
+  SDL_Event e;
+  SDL_zero(e);
+  while (quit == false) {
+    while (SDL_PollEvent(&e)) {
+      if (e.type == SDL_EVENT_QUIT)
+        quit = true;
+      SDL_SetRenderDrawColor(gRenderer,0, 0, 0, 0);
+      SDL_RenderClear(gRenderer);
+      board.renderBoard();
+      SDL_RenderPresent(gRenderer);
     }
   }
 }
+
+
 void close() {
   SDL_DestroySurface( gHelloWorld );
   gHelloWorld = nullptr;
@@ -76,6 +56,7 @@ void close() {
 
   SDL_Quit();
 }
+
 void init() {
 
   if ( SDL_Init(SDL_INIT_VIDEO) == false){
