@@ -2,20 +2,17 @@
 
 #include <string>
 #include "Piece.h"
-#include <SDL3/SDL_surface.h > 
-#include <SDL3_image/SDL_image.h>
-#include <fmt/base.h>
-#include <map>
-#include <iostream>
+#include <SDL3/SDL_surface.h> 
 
-const int BOARDSIZE = 480;
+const float BOARDSIZE = 480;
 
 
 class Board{
 public:
-    Board(std::string fen);
+    Board(std::string fen, SDL_Renderer*);
     void printGrid();
-    void renderBoard(SDL_Renderer* render);
+    void renderBoard();
 private:
     Piece pieces[8][8];
+    SDL_Renderer* renderer;
 };

@@ -1,16 +1,18 @@
 #pragma once
-#include <filesystem>
+#include <SDL3/SDL_render.h>
 #include <string>
 class Piece{
 public:
     enum class PieceColor { White, Black, None };
 
-    Piece(PieceColor c, std::string n) : color(c), name(n){};
+    
+    Piece(PieceColor, std::string, SDL_Renderer*, std::string);
     Piece() : color(PieceColor::None), name("") {}
-    std::string getImagePath();
+    SDL_Texture* GetTexture();
     std::string printPiece();
     PieceColor color;
     std::string name;
 private:
-    static const std::string piecesDir;
+    std::string getImagePath(std::string);
+    SDL_Texture* texture;
 };

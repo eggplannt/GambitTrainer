@@ -1,5 +1,11 @@
 #include "Board.h"
 
+#include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3_image/SDL_image.h>
+#include <fmt/base.h>
+#include <map>
+#include <iostream>
 
 void Board::printGrid() {
     for (int i = 0; i < 8; i++) {
@@ -11,8 +17,8 @@ void Board::printGrid() {
 
 }
 
-void Board::renderBoard(SDL_Renderer* render) {
-    SDL_Texture* boardTexture = IMG_LoadTexture(render, "res/images/board.png");
+void Board::renderBoard() {
+    SDL_Texture* boardTexture = IMG_LoadTexture(renderer, "res/images/board.png");
     if (boardTexture == NULL) {
         std::cout << "Error loading image: " << SDL_GetError();
         return;
@@ -20,8 +26,8 @@ void Board::renderBoard(SDL_Renderer* render) {
     
 
     SDL_FRect rect = { 0, 0, 480, 480};
-    SDL_RenderTexture(render, boardTexture, 0, &rect);
-    int squareSize = BOARDSIZE / 8;
+    SDL_RenderTexture(renderer, boardTexture, 0, &rect);
+    float squareSize = BOARDSIZE / 8;
 
     for (int x = 0; x < 8; x++)
     {
@@ -30,37 +36,30 @@ void Board::renderBoard(SDL_Renderer* render) {
             if (pieces[x][y].name == "") {
                 continue;
             }
-
-            SDL_Texture* pieceTexture = IMG_LoadTexture(render, pieces[x][y].getImagePath().c_str());
-            if (pieceTexture == NULL) {
-                std::cout << "Error loading image: " << SDL_GetError();
-                return;
-            }
-
-            SDL_SetTextureBlendMode(pieceTexture, SDL_BLENDMODE_BLEND);
-
+            
+            SDL_Texture* pieceTexture = pieces[x][y].GetTexture();
             SDL_FRect pieceRect = { squareSize*x, squareSize*y, squareSize, squareSize };
-            SDL_RenderTexture(render, pieceTexture, 0, &pieceRect);
+            SDL_RenderTexture(renderer, pieceTexture, NULL, &pieceRect);
             
         }
     }
 }
 
-Board::Board(std::string fen) : pieces{} {
+Board::Board(std::string fen, SDL_Renderer* r) : pieces{}, renderer(r){
     std::map<char, Piece> fenMap;
 
-    fenMap['r'] = Piece(Piece::PieceColor::Black, "rook");
-    fenMap['R'] = Piece(Piece::PieceColor::White, "rook");
-    fenMap['n'] = Piece(Piece::PieceColor::Black, "knight");
-    fenMap['N'] = Piece(Piece::PieceColor::White, "knight");
-    fenMap['b'] = Piece(Piece::PieceColor::Black, "bishop");
-    fenMap['B'] = Piece(Piece::PieceColor::White, "bishop");
-    fenMap['q'] = Piece(Piece::PieceColor::Black, "queen");
-    fenMap['Q'] = Piece(Piece::PieceColor::White, "queen");
-    fenMap['k'] = Piece(Piece::PieceColor::Black, "king");
-    fenMap['K'] = Piece(Piece::PieceColor::White, "king");
-    fenMap['p'] = Piece(Piece::PieceColor::Black, "pawn");
-    fenMap['P'] = Piece(Piece::PieceColor::White, "pawn");
+    fenMap['r'] = Piece(Piece::PieceColor::Black, "R", r, "alpha");
+    fenMap['R'] = Piece(Piece::PieceColor::White, "R", r, "alpha");
+    fenMap['n'] = Piece(Piece::PieceColor::Black, "N", r, "alpha");
+    fenMap['N'] = Piece(Piece::PieceColor::White, "N", r, "alpha");
+    fenMap['b'] = Piece(Piece::PieceColor::Black, "B", r, "alpha");
+    fenMap['B'] = Piece(Piece::PieceColor::White, "B", r, "alpha");
+    fenMap['q'] = Piece(Piece::PieceColor::Black, "Q", r, "alpha");
+    fenMap['Q'] = Piece(Piece::PieceColor::White, "Q", r, "alpha");
+    fenMap['k'] = Piece(Piece::PieceColor::Black, "K", r, "alpha");
+    fenMap['K'] = Piece(Piece::PieceColor::White, "K", r, "alpha");
+    fenMap['p'] = Piece(Piece::PieceColor::Black, "P", r, "alpha");
+    fenMap['P'] = Piece(Piece::PieceColor::White, "P", r, "alpha");
 
     int x = 0;
     int y = 0;

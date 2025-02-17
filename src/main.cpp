@@ -1,15 +1,17 @@
-#include "main.h"
-#include "Board.h"
+#include <imgui.h>
+#include <SDL3/SDL.h>
 #include <iostream>
 #include <string>
+
+#include "main.h"
+#include "Board.h"
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 SDL_Surface* gHelloWorld = nullptr;
 
 const std::string DEFAULTFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-int main( int argc, char* args[] ) {
+int main(int argc, char *args[]) {
   int exitCode = 0;
 
 
@@ -21,25 +23,29 @@ int main( int argc, char* args[] ) {
     return -1;
   }
 
-  Board board(DEFAULTFEN);
+  gameLoop();
+  close();
+}
+
+void gameLoop() {
+  Board board(DEFAULTFEN, gRenderer);
   board.printGrid();
+
   bool quit = false;
   SDL_Event e;
   SDL_zero(e);
-  while( quit == false ) {
-    while( SDL_PollEvent( &e ) ) {
-      if( e.type == SDL_EVENT_QUIT ) quit = true;
+  while (quit == false) {
+    while (SDL_PollEvent(&e)) {
+      if (e.type == SDL_EVENT_QUIT)
+        quit = true;
+      SDL_SetRenderDrawColor(gRenderer,0, 0, 0, 0);
       SDL_RenderClear(gRenderer);
-      //basicRenderBoard();
-      board.renderBoard(gRenderer);
+      board.renderBoard();
       SDL_RenderPresent(gRenderer);
-
-
     }
-    
   }
-  close();
 }
+
 
 void close() {
   SDL_DestroySurface( gHelloWorld );
@@ -50,6 +56,7 @@ void close() {
 
   SDL_Quit();
 }
+
 void init() {
 
   if ( SDL_Init(SDL_INIT_VIDEO) == false){
