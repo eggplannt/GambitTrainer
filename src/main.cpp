@@ -2,6 +2,10 @@
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <string>
+#include <imgui.h>
+
+#include <imgui_impl_sdlrenderer3.h>
+#include <imgui_impl_sdl3.h>
 
 #include "main.h"
 #include "Board.h"
@@ -28,7 +32,7 @@ int main(int argc, char *args[]) {
 }
 
 void gameLoop() {
-  Board board(DEFAULTFEN, gRenderer);
+  Board board(DEFAULTFEN, gRenderer, 720);
   board.printGrid();
 
   bool quit = false;
@@ -36,13 +40,22 @@ void gameLoop() {
   SDL_zero(e);
   while (quit == false) {
     while (SDL_PollEvent(&e)) {
+      ImGui_ImplSDL3_ProcessEvent(&e);
       if (e.type == SDL_EVENT_QUIT)
         quit = true;
-      SDL_SetRenderDrawColor(gRenderer,0, 0, 0, 0);
-      SDL_RenderClear(gRenderer);
-      board.renderBoard();
-      SDL_RenderPresent(gRenderer);
     }
+    ImGui_ImplSDLRenderer3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    SDL_SetRenderDrawColor(gRenderer,0, 0, 0, 0);
+    SDL_RenderClear(gRenderer);
+    board.DrawBoard();
+    ImGui::ShowDemoWindow();
+
+    ImGui::Render();
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), gRenderer);
+    SDL_RenderPresent(gRenderer);
   }
 }
 
@@ -67,8 +80,8 @@ void init() {
 
   gWindow = SDL_CreateWindow(
     "GambitTrainer",
-    480,
-    480,
+    720,
+    720,
     0
   );
   if (gWindow == nullptr){
@@ -82,6 +95,14 @@ void init() {
     close();
     exit(-1);
   }
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+  ImGui::StyleColorsDark();
+  ImGui_ImplSDL3_InitForSDLRenderer(gWindow, gRenderer);
+  ImGui_ImplSDLRenderer3_Init(gRenderer);
 }
 
 bool loadMedia()

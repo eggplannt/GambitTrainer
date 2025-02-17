@@ -4,15 +4,15 @@
 #include "Piece.h"
 #include <SDL3/SDL_surface.h> 
 
-const float BOARDSIZE = 480;
-
 
 class Board{
 public:
-    Board(std::string fen, SDL_Renderer*);
+    Board(std::string fen, SDL_Renderer*, float);
+    ~Board();
     void printGrid();
-    void renderBoard();
+    void DrawBoard();
 private:
+    float boardSize;
     Piece pieces[8][8];
     SDL_Renderer* renderer;
 };

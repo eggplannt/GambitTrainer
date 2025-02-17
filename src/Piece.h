@@ -8,6 +8,7 @@ public:
     
     Piece(PieceColor, std::string, SDL_Renderer*, std::string);
     Piece() : color(PieceColor::None), name("") {}
+    void Destroy();
     SDL_Texture* GetTexture();
     std::string printPiece();
     PieceColor color;

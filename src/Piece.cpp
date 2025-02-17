@@ -14,7 +14,9 @@ Piece::Piece(PieceColor c, std::string n, SDL_Renderer* r, std::string style) : 
         return;
     }
 }
-
+void Piece::Destroy(){
+    SDL_DestroyTexture(texture);
+}
 SDL_Texture* Piece::GetTexture() {return texture;}
 
 std::string Piece::getImagePath(std::string style) {
