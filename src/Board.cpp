@@ -1,13 +1,20 @@
-#include "Board.h"
+
 
 #include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_iostream.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
 #include <SDL3_image/SDL_image.h>
 #include <fmt/base.h>
-#include <iostream>
+#include <imgui.h>
+#include <imgui_stdlib.h>
 #include <map>
+#include <string>
 
-void Board::printGrid() {
+#include "Board.h"
+#include "Piece.h"
+void Board::PrintGrid() {
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
       fmt::print("{} ", pieces[j][i].printPiece());
@@ -17,9 +24,11 @@ void Board::printGrid() {
 }
 
 void Board::DrawBoard() {
-  SDL_Texture *boardTexture = IMG_LoadTexture(renderer, "res/images/board.png");
+
+  SDL_Texture *boardTexture =
+      IMG_LoadTexture(renderer, "res/images/lichess-org board sets/brown.png");
   if (boardTexture == NULL) {
-    std::cout << "Error loading image: " << SDL_GetError();
+    fmt::print("Error creating Texture: {}\n", SDL_GetError());
     return;
   }
 
@@ -37,6 +46,12 @@ void Board::DrawBoard() {
       SDL_Texture *pieceTexture = pieces[x][y].GetTexture();
       SDL_FRect pieceRect = {squareSize * x, squareSize * y, squareSize,
                              squareSize};
+
+      if (theme == "pixel") {
+        SDL_SetTextureScaleMode(pieceTexture,
+                                SDL_SCALEMODE_NEAREST); // Prevents smoothing
+      }
+
       SDL_RenderTexture(renderer, pieceTexture, NULL, &pieceRect);
     }
   }
@@ -48,38 +63,69 @@ Board::~Board() {
     }
   }
 }
-Board::Board(std::string fen, SDL_Renderer *r, float b)
-    : pieces{}, renderer(r), boardSize(b) {
-  std::map<char, Piece> fenMap;
+Board::Board(std::string f, SDL_Renderer *r, float b, std::string t)
+    : pieces{}, renderer(r), boardSize(b), theme(t) {
 
-  fenMap['r'] = Piece(Piece::PieceColor::Black, "R", r, "alpha");
-  fenMap['R'] = Piece(Piece::PieceColor::White, "R", r, "alpha");
-  fenMap['n'] = Piece(Piece::PieceColor::Black, "N", r, "alpha");
-  fenMap['N'] = Piece(Piece::PieceColor::White, "N", r, "alpha");
-  fenMap['b'] = Piece(Piece::PieceColor::Black, "B", r, "alpha");
-  fenMap['B'] = Piece(Piece::PieceColor::White, "B", r, "alpha");
-  fenMap['q'] = Piece(Piece::PieceColor::Black, "Q", r, "alpha");
-  fenMap['Q'] = Piece(Piece::PieceColor::White, "Q", r, "alpha");
-  fenMap['k'] = Piece(Piece::PieceColor::Black, "K", r, "alpha");
-  fenMap['K'] = Piece(Piece::PieceColor::White, "K", r, "alpha");
-  fenMap['p'] = Piece(Piece::PieceColor::Black, "P", r, "alpha");
-  fenMap['P'] = Piece(Piece::PieceColor::White, "P", r, "alpha");
+  fenMap['r'] = Piece(Piece::PieceColor::Black, "R", r, theme);
+  fenMap['R'] = Piece(Piece::PieceColor::White, "R", r, theme);
+  fenMap['n'] = Piece(Piece::PieceColor::Black, "N", r, theme);
+  fenMap['N'] = Piece(Piece::PieceColor::White, "N", r, theme);
+  fenMap['b'] = Piece(Piece::PieceColor::Black, "B", r, theme);
+  fenMap['B'] = Piece(Piece::PieceColor::White, "B", r, theme);
+  fenMap['q'] = Piece(Piece::PieceColor::Black, "Q", r, theme);
+  fenMap['Q'] = Piece(Piece::PieceColor::White, "Q", r, theme);
+  fenMap['k'] = Piece(Piece::PieceColor::Black, "K", r, theme);
+  fenMap['K'] = Piece(Piece::PieceColor::White, "K", r, theme);
+  fenMap['p'] = Piece(Piece::PieceColor::Black, "P", r, theme);
+  fenMap['P'] = Piece(Piece::PieceColor::White, "P", r, theme);
 
+  fen = f;
+  UpdateToFen();
+}
+void Board::UpdateToFen() {
   int x = 0;
   int y = 0;
   for (char s : fen) {
     if (fenMap.count(s)) {
       pieces[x][y] = fenMap[s];
-      // fmt::print("{} ({}, {})", pieces[x][y].printPiece(), x, y);
-
       x++;
     } else if (s == '/') {
       y++;
       x = 0;
     } else if (s == ' ') {
-      break;
+      return;
     } else {
-      x += s - '0';
+      int count = s - '0';
+      for (int i = 0; i < count; i++) {
+        pieces[x][y] = Piece();
+        x++;
+      }
     }
   }
+}
+
+void Board::ChangeFenGui() {
+  ImGui::SetNextWindowSize(ImVec2(300, 100));
+  ImGui::SetNextWindowPos(ImVec2(100, 50));
+
+  ImGui::Begin("Change Fen");
+  ImGui::InputText("Fen", &fen);
+  if (ImGui::Button("Set"))
+    UpdateToFen();
+
+  ImGui::End();
+}
+
+void Board::ChangeThemeGui() {
+  ImGui::SetNextWindowSize(ImVec2(300, 100));
+  ImGui::SetNextWindowPos(ImVec2(500, 50));
+  ImGui::Begin("Change Theme");
+  ImGui::InputText("Theme", &theme);
+  if (ImGui::Button("Set")) {
+    for (auto i : fenMap) {
+      fenMap[i.first].ChangeTheme(renderer, theme);
+    }
+    UpdateToFen();
+  }
+  ImGui::End();
 }
