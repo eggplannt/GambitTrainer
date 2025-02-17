@@ -1,28 +1,27 @@
-#include <imgui.h>
 #include <SDL3/SDL.h>
+#include <imgui.h>
 #include <iostream>
 #include <string>
-#include <imgui.h>
 
-#include <imgui_impl_sdlrenderer3.h>
 #include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
 
-#include "main.h"
 #include "Board.h"
+#include "main.h"
 
-SDL_Window* gWindow = nullptr;
-SDL_Renderer* gRenderer = nullptr;
-SDL_Surface* gHelloWorld = nullptr;
+SDL_Window *gWindow = nullptr;
+SDL_Renderer *gRenderer = nullptr;
+SDL_Surface *gHelloWorld = nullptr;
 
-const std::string DEFAULTFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const std::string DEFAULTFEN =
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 int main(int argc, char *args[]) {
   int exitCode = 0;
 
-
   init();
   std::cout << SDL_VERSION;
-  if( !loadMedia() ) {
-    SDL_Log( "Unable to load media!\n" );
+  if (!loadMedia()) {
+    SDL_Log("Unable to load media!\n");
     close();
     return -1;
   }
@@ -32,8 +31,8 @@ int main(int argc, char *args[]) {
 }
 
 void gameLoop() {
-  Board board(DEFAULTFEN, gRenderer, 720);
-  board.printGrid();
+  Board board(DEFAULTFEN, gRenderer, 960, "cburnett");
+  board.PrintGrid();
 
   bool quit = false;
   SDL_Event e;
@@ -48,10 +47,11 @@ void gameLoop() {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
-    SDL_SetRenderDrawColor(gRenderer,0, 0, 0, 0);
+    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
     SDL_RenderClear(gRenderer);
     board.DrawBoard();
-    ImGui::ShowDemoWindow();
+    board.ChangeFenGui();
+    board.ChangeThemeGui();
 
     ImGui::Render();
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), gRenderer);
@@ -59,12 +59,11 @@ void gameLoop() {
   }
 }
 
-
 void close() {
-  SDL_DestroySurface( gHelloWorld );
+  SDL_DestroySurface(gHelloWorld);
   gHelloWorld = nullptr;
-  
-  SDL_DestroyWindow( gWindow );
+
+  SDL_DestroyWindow(gWindow);
   gWindow = nullptr;
 
   SDL_Quit();
@@ -72,52 +71,46 @@ void close() {
 
 void init() {
 
-  if ( SDL_Init(SDL_INIT_VIDEO) == false){
+  if (SDL_Init(SDL_INIT_VIDEO) == false) {
     SDL_Log("SDL_Init: %s", SDL_GetError());
     close();
     exit(-1);
   }
+  SDL_SetHint("SDL_IMAGE_SVG_DPI", "300"); // Increase DPI
 
-  gWindow = SDL_CreateWindow(
-    "GambitTrainer",
-    720,
-    720,
-    0
-  );
-  if (gWindow == nullptr){
+  gWindow = SDL_CreateWindow("GambitTrainer", 960, 960, 0);
+  if (gWindow == nullptr) {
     SDL_Log("SDL_CreateWindow: %s", SDL_GetError());
     close();
     exit(-1);
   }
   gRenderer = SDL_CreateRenderer(gWindow, NULL);
-  if (gRenderer == nullptr){
+  if (gRenderer == nullptr) {
     SDL_Log("SDL_CreateRenderer: %s", SDL_GetError());
     close();
     exit(-1);
   }
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  ImGuiIO &io = ImGui::GetIO();
+  (void)io;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
   ImGui::StyleColorsDark();
   ImGui_ImplSDL3_InitForSDLRenderer(gWindow, gRenderer);
   ImGui_ImplSDLRenderer3_Init(gRenderer);
+  ImGui::GetIO().IniFilename = nullptr;
 }
 
-bool loadMedia()
-{
-    bool success{ true };
+bool loadMedia() {
+  bool success{true};
 
-    std::string imagePath{ "res/images/sdl.bmp" };
-    if( gHelloWorld = SDL_LoadBMP( imagePath.c_str() ); gHelloWorld == nullptr )
-    {
-        SDL_Log( "Unable to load image %s! SDL Error: %s\n", imagePath.c_str(), SDL_GetError() );
-        success = false;
-    }
+  std::string imagePath{"res/images/sdl.bmp"};
+  if (gHelloWorld = SDL_LoadBMP(imagePath.c_str()); gHelloWorld == nullptr) {
+    SDL_Log("Unable to load image %s! SDL Error: %s\n", imagePath.c_str(),
+            SDL_GetError());
+    success = false;
+  }
 
-    return success;
+  return success;
 }
-
-
-
